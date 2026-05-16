@@ -336,6 +336,78 @@ Debugging no longer means probing an opaque database — it becomes a determinis
 
 ---
 
+## 🚀 CI/CD & Docker Deployment
+
+### Automated Docker Builds
+
+The project includes GitHub Actions CI/CD that automatically builds and publishes Docker images:
+
+- **On every push to `main` branch**: Builds and tests the Docker image
+- **On version tags (`v*`)**: Builds, tests, and publishes the image to GitHub Container Registry
+- **Security scanning**: Automated vulnerability scanning with Trivy
+
+### Quick Start with Docker
+
+#### Using Docker Compose (Recommended)
+
+1. Copy the environment template:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` and set your API key:
+   ```bash
+   MODEL_API_KEY=your_actual_api_key_here
+   ```
+
+3. Start the service:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. Check the service status:
+   ```bash
+   docker-compose logs -f
+   ```
+
+#### Using Docker Directly
+
+```bash
+# Build locally
+docker build -f docker/opensource/Dockerfile.hermes -t hermes-memory .
+
+# Run the container
+docker run -it -p 8420:8420 \\
+  -e MODEL_API_KEY=your_api_key \\
+  hermes-memory
+```
+
+#### Using Pre-built Images
+
+```bash
+# Pull from GitHub Container Registry
+docker pull ghcr.io/tencent/tencentdb-agent-memory/hermes-memory:latest
+
+docker run -it -p 8420:8420 \\
+  -e MODEL_API_KEY=your_api_key \\
+  ghcr.io/tencent/tencentdb-agent-memory/hermes-memory:latest
+```
+
+### Available Docker Tags
+
+- `latest`: Latest build from main branch
+- `vX.Y.Z`: Versioned releases (e.g., `v0.3.4`)
+- `sha-xxxxxx`: Specific commit builds
+
+### CI/CD Workflows
+
+The project includes two main workflows:
+
+1. **PR CI** (`pr-ci.yml`): Runs on pull requests to validate package builds and manifest
+2. **Docker Build** (`docker-build.yml`): Builds, tests, and publishes Docker images
+
+---
+
 ## Documentation
 
 | Document | Contents |
