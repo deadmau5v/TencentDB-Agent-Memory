@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  hermes-memory:
+    build:
+      context: .
+      dockerfile: docker/opensource/Dockerfile.hermes
+    image: ghcr.io/${{ github.repository }}/hermes-memory:latest
+    ports:
+      - "8420:8420"
+    environment:
+      - MODEL_API_KEY=${MODEL_API_KEY:-}
+      - MODEL_NAME=${MODEL_NAME:-deepseek-v3.2}
+      - MODEL_BASE_URL=${MODEL_BASE_URL:-https://api.lkeap.cloud.tencent.com/v1}
+      - MODEL_PROVIDER=${MODEL_PROVIDER:-custom}
+    volumes:
+      - hermes-data:/opt/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8420/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+volumes:
+  hermes-data:
